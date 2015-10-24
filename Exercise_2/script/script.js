@@ -29,10 +29,85 @@ var dataset3 = [
     {x:800, y:500, name:"purple", r:30, color:"purple"}
 ];
 
+d3.selectAll('.btn')
+    .on('click',function(d){
 
+    console.log('click event');
+    //find ot the id of the button that to be click
+
+    var id= d3.select(this)
+            .attr('id')
+        console.log(id);
+
+        if(id == 'btn-1'){
+            //draw the btn-2
+            draw(dataset1)
+        }else if (id == 'btn-2'){
+            //draw the btn-2
+            draw(dataset2)
+        }else{
+            //draw the btn-3
+            draw(dataset3)
+        }
+});
+
+function draw(dataArray){
+    var node = plot.selectAll('.node')
+        .data(dataArray, function(d){
+            return d.name
+        ;})
+
+        node.enter()
+            .append('circle')
+            .attr('class','node')// the class is to carry those circles who named as node
+
+        node.exit()
+            .remove()
+
+        node.transition()
+            .duration(500)
+            .attr('r', function(d){return d.r})
+            .attr('cx',function(d){return d.x})
+            .attr('cy',function(d){return d.y})
+            .style('fill',function(d){return d.color})
+
+    console.log(node);
+
+
+
+}
 //TASK 1.1: represent dataset 1 using <circle>
+//plot.selectAll('circle')
+//    .data(dataset1)
+//    .enter()
+//    .append('circle')
+//    .attr('class','firstcircle')
+//    .attr('cx', function(d){return d.x})
+//    .attr('cy',function(d){return d.y})
+//    .attr('r',function(d){return d.r})
+//    .style('fill',function(d){return d.color})
 
 //TASK 1.2: represent dataset 2 using <g>, containing <rect> and <text>
+//var node = plot.selectAll('g')
+//                .data(dataset2)
+//                .enter()
+//                .append('g')
+//                .attr('class','group')
+//                .attr('transform',function(d){return 'translate('+d.x+','+ d.y+')'})
+//
+//
+//    node.append('rect')
+//        .attr('class','rect')
+//        .attr('x1',5)
+//        .attr('x2',5)
+//        .attr('y1',10)
+//        .attr('y2',10)
+//
+//    node.append('text')
+//        .text(function(d){return d.name})
+
+
+
 
 //TASK 2: Use enter/exit/update to toggle between these three datasets
 

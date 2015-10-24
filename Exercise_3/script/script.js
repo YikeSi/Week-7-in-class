@@ -28,7 +28,8 @@ var axisY = d3.svg.axis()
 
 
 
-queue()
+queue()//multiple ds3 calls, make sure they happend simutaneously to the callback function
+
     .defer(d3.csv,'data/world_bank_1995_gdp_co2.csv',parse)
     .defer(d3.csv,'data/world_bank_2010_gdp_co2.csv',parse)
     .await(function(err,data1995,data2010){
@@ -51,11 +52,57 @@ queue()
         console.log(data1995);
         console.log(data2010);
 
+        draw(data1995);
 
+        d3.selectAll('.year')
+            .on('click',function(){
+
+                var id = d3.select(this)
+                    .attr('id');
+                console.log(id);
+                if(id == "year-1995"){
+                    draw(data1995);
+                }else if (id == 'year-2010')
+                {
+                    draw(data2010);
+                }
+            })
 
     });
 
 function draw(data){
+    var node = plot.selectAll(".country")
+        .data(data, function(d){return d.cName})
+
+        var nodeenter = node.enter()
+                            .append('g')
+                            .attr("transform",function(d){
+                                    return 'translate('+scaleX(d.gdpPerCap)+','+scaleY(d.co2PerCap)+')'
+                            })
+                            .attr("class","country")
+                            .on('click',function(){
+                                        d3.select(this).select('circle')
+                                            .attr('class','node animate')
+                                                        .style('fill',"red")
+                            });
+
+            nodeenter.append('circle')
+                .attr('r',0)
+
+            nodeenter.append('text')
+                .text(function(d){
+                    return d.cCode
+                })
+
+        node.exit()
+            .remove();
+
+        node.transition()
+            .duration(500)
+            .attr('transform',function(d){return 'translate('+scaleX(d.gdpPerCap)+','+scaleY(d.co2PerCap)+')'})
+            .select('circle')
+            .attr('r',function(d){return scaleR(d.co2Total)});
+            //update: transition,
 
 
 }
